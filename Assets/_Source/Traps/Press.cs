@@ -1,18 +1,15 @@
 using DG.Tweening;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Press : MonoBehaviour, IStateChanger
 {
-    [SerializeField] private float _timeUp;
-    [SerializeField] private float _timeDown;
-
-    [SerializeField] private int _damage;
-
-    [SerializeField] private Transform _bottomTargetPoint;
-    [SerializeField] private Transform _upTargetPoint;
-    [SerializeField] private Transform _movingPart;
+    [SerializeField] private float _timeUp;      // Время, за которое пресс поднимается
+    [SerializeField] private float _delayBeforeDown; // Время, перед тем как пресс начнет опускаться
+    [SerializeField] private float _damage;      // Урон от пресса
+    [SerializeField] private Transform _bottomTargetPoint;  // Точка, куда опускается пресс
+    [SerializeField] private Transform _upTargetPoint;      // Точка, куда поднимается пресс
+    [SerializeField] private Transform _movingPart;         // Движущаяся часть пресса
 
     private void Awake()
     {
@@ -22,28 +19,22 @@ public class Press : MonoBehaviour, IStateChanger
 
     public void ChangeState(State newState)
     {
-        switch (newState)
+        if (newState == State.closingAnimation)
         {
-            case State.closingAnimation:
-                StopCoroutine(DoAction());
-                break;
+            StopCoroutine(DoAction());
         }
     }
 
     private IEnumerator DoAction()
     {
-        yield return new WaitForSeconds(_timeUp);
-        _movingPart.DOMove(_bottomTargetPoint.position, 0.3f).SetEase(Ease.InOutQuart);
+        // Подождем перед началом движения вниз
+        yield return new WaitForSeconds(_delayBeforeDown);
 
-        yield return new WaitForSeconds(_timeDown);
-        _movingPart.DOMove(_upTargetPoint.position, 0.3f).SetEase(Ease.InOutQuart);
+        // Резкое движение вниз
+        _movingPart.DOMove(_bottomTargetPoint.position, 0.2f).SetEase(Ease.InBounce); // Резко опускается
 
-        yield return StartCoroutine(DoAction());
-    }
+        // Ожидаем перед движением вверх
+        yield return new WaitForSeconds(0.2f);
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
-            collision.transform.GetComponent<PlayerHealth>().GetDamage(_damage);
-    }
-}
+        // Медленное движение вверх
+        _movingPart.DOMove(_upTargetPoint

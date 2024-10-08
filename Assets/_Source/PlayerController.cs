@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour, IStateChanger
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpHeight;
     [SerializeField] private float _gravityMultiplyer;
+    [SerializeField] public Animator anim;
 
     private bool _canMove;
     private bool _canJump;
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour, IStateChanger
 
     void Awake()
     {
+        anim = GetComponent<Animator>();
         StateManager.Subscribe(this);
         _rb.gravityScale = _gravityMultiplyer;
     }
@@ -52,9 +54,13 @@ public class PlayerController : MonoBehaviour, IStateChanger
         {
             if (Input.GetKey(KeyCode.A))
                 _rb.velocity = new Vector2(-_speed, _rb.velocity.y);
+                anim.SetFloat("Run", Mathf.Abs(Input.GetAxisRaw("Horizontal")));
+                transform.GetComponent<SpriteRenderer>().flipX = true;
 
             if (Input.GetKey(KeyCode.D))
                 _rb.velocity = new Vector2(_speed, _rb.velocity.y);
+                anim.SetFloat("Run", Mathf.Abs(Input.GetAxisRaw("Horizontal")));
+                transform.GetComponent<SpriteRenderer>().flipX = false;
 
             if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
                 _rb.velocity = new Vector2(0, _rb.velocity.y);
@@ -68,12 +74,14 @@ public class PlayerController : MonoBehaviour, IStateChanger
                 {
                     _rb.AddForce(Vector2.up * _jumpHeight, ForceMode2D.Impulse);
                     _canJump = false;
+                    anim.SetBool("Jump", true);
                 }
 
             if (Physics2D.Raycast(_jumpCheck.position, Vector2.down, 0.05f, _floorLayerMask))
                 _canJump = true;
             else
                 _canJump = false;
+                anim.SetBool("Jumping", false);
         }
 
         else
