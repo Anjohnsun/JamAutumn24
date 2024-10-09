@@ -451,8 +451,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _timeUp: 4
-  _timeDown: 1
-  _damage: 3
+  _delayBeforeDown: 0.3
+  _damage: 1000
   _bottomTargetPoint: {fileID: 3476143346858507124}
   _upTargetPoint: {fileID: 6588096985376789071}
   _movingPart: {fileID: 5597556825323083159}

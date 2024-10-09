@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,11 +11,14 @@ public class Satan : MonoBehaviour, IStateChanger
     [SerializeField] private Vector2 _attackTimeRange;
 
     [SerializeField] private bool _canAttack;
+    [SerializeField] private Transform _spriteToAnimate;
+    [SerializeField] private float _animationAmplitude;
 
     private void Start()
     {
         StateManager.Subscribe(this);
         StartCoroutine(DoFirstAttack());
+        StartCoroutine(AnimateSatan());
     }
 
     public void ChangeState(State newState)
@@ -67,4 +71,14 @@ public class Satan : MonoBehaviour, IStateChanger
         yield return StartCoroutine(RegularAttack());
     }
 
+    
+    private IEnumerator AnimateSatan()
+    {
+        _spriteToAnimate.DOMoveY(_spriteToAnimate.position.y+_animationAmplitude, 0.4f).SetEase(Ease.OutQuad);
+        yield return new WaitForSeconds(0.4f);
+        _spriteToAnimate.DOMoveY(_spriteToAnimate.position.y-_animationAmplitude, 0.4f).SetEase(Ease.InQuad);
+        yield return new WaitForSeconds(0.4f);
+
+        yield return StartCoroutine(AnimateSatan());
+    }
 }
