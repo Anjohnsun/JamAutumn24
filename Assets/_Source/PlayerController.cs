@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour, IStateChanger
                 _rb.velocity = new Vector2(-_speed, _rb.velocity.y);
                 transform.GetComponent<SpriteRenderer>().flipX = true;
                 anim.SetFloat("Run", Mathf.Abs(Input.GetAxisRaw("Horizontal")));
+                anim.SetBool("GgRun", true);
             }
 
             if (Input.GetKey(KeyCode.D))
@@ -64,11 +65,12 @@ public class PlayerController : MonoBehaviour, IStateChanger
                 _rb.velocity = new Vector2(_speed, _rb.velocity.y);
                 transform.GetComponent<SpriteRenderer>().flipX = false;
                 anim.SetFloat("Run", Mathf.Abs(Input.GetAxisRaw("Horizontal")));
+                anim.SetBool("GgRun", true);
             }
 
             if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
                 _rb.velocity = new Vector2(0, _rb.velocity.y);
-
+                anim.SetBool("GgRun", true);
 
             if (Physics2D.Raycast(_jumpCheck.position, Vector2.down, 0.05f, _floorLayerMask.value))
                 _canJump = true;
@@ -78,19 +80,20 @@ public class PlayerController : MonoBehaviour, IStateChanger
                 {
                     _rb.AddForce(Vector2.up * _jumpHeight, ForceMode2D.Impulse);
                     _canJump = false;
-                    //anim.SetBool("Jump", true);
+                    anim.SetBool("GgJump", true);
                 }
 
             if (Physics2D.Raycast(_jumpCheck.position, Vector2.down, 0.05f, _floorLayerMask))
                 _canJump = true;
             else
                 _canJump = false;
-            //anim.SetBool("Jumping", false);
+            anim.SetBool("GgJump", false);
         }
 
         else
         {
             _rb.velocity = new Vector2();
+            anim.SetBool("GgRun", false);
         }
     }
 
